@@ -9,29 +9,20 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 
 
-classes = ['leaf mold', 
-           'septoria leaf spot', 
-           'spider mites two-spotted spider mite', 
-           'late blight', 
-           'healthy', 
-           'early blight', 
-           'target spot', 
-           'tomato yellow leaf curl virus', 
-           'bacterial spot', 
-           'tomato mosaic virus']
+classes = ['healthy', 'septoria leaf spot', 'leaf mold', 'bacterial spot', 'target spot', 'late blight', 'spider mites two-spotted spider mite', 'tomato mosaic virus', 'tomato yellow leaf curl virus', 'early blight']
 
-UPLOAD_IMG = "uploads"
-UPLOAD_FOLDER = os.path.join('static', UPLOAD_IMG)
+UPLOAD_FOLDER = "uploads"
+# UPLOAD_FOLDER = os.path.join(UPLOAD_IMG)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'JPG', 'PNG'])
 
 app = Flask(__name__)
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+# app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 model = load_model('./model.h5', compile=False)#学習済みモデルをロード
-resized_size = 32
+resized_size = 64
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -55,14 +46,11 @@ def upload_file():
             #変換したデータをモデルに渡して予測する
             result = model.predict(data)
             predicted = result[0].argmax()
-            pred_img = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             pred_answer = "これは " + classes[predicted] + " です。"
             result = [i for i in result]
-            print(result)
 
             return render_template("index.html", 
                                    answer=pred_answer,
-                                   answer_img=pred_img,
                                    img_path="ファイル名: " + filename,
                                    pred_result=zip(classes, np.round(result[0]*100, 2)),
                                    )
@@ -72,4 +60,4 @@ def upload_file():
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8080))
-    app.run(host ='0.0.0.0',port = port)
+    app.run(debug=True, host ='0.0.0.0',port = port)
