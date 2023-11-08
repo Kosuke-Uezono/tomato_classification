@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>トマトの病気判別します</title>
+    <link rel="stylesheet" href="./static/stylesheet.css">
+</head>
+<body>
+    <header>   
+        <img class="header_img" src="https://aidemyexstorage.blob.core.windows.net/aidemycontents/1621500180546399.png" alt="Aidemy">
+        <a class="header-logo" href="#">トマトの病気判別します</a>
+    </header>
+
+    <div class="main">    
+        <h2> AIが送信されたトマト画像の病気を識別します</h2>
+        <p>画像を送信してください</p>
+        <form method="POST" enctype="multipart/form-data">
+            <input class="file_choose" type="file" name="file">
+            <input class="btn" value="submit!" type="submit">
+        </form>
+        <div class="answer_img">
+            <img src="{{ answer_img }}">
+            <p>{{img_path}}</p>
+        </div>
+        <div class="answer">
+            {{answer}}
+            {% if answer %}
+            <table class="table_center">
+                <tr>
+                    <th>class name</th>
+                    <th>prediction rate</th>
+                </tr>
+                {% for class_name, rate in pred_result %}
+                <tr>
+                    <th class="rate_result">{{class_name}}</td>
+                    <td class="rate_result">{{rate}}%</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+    </div>
+    
+    <footer>
+        <img class="footer_img" src="https://aidemyexstorage.blob.core.windows.net/aidemycontents/1621500180546399.png" alt="Aidemy">
+        <small>&copy; 2019 Aidemy, inc.</small>   
+    </footer>
+</body>
+</html>
